@@ -36,7 +36,7 @@ const App = (props) => {
     setAll(allClicks.concat('R'))
     setRight(right + 1)
   }
-  debugger
+  // debugger
 
   return (
     <div>
