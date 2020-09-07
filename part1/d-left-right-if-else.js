@@ -1,5 +1,5 @@
-import React from 'react';
-import App from './src/App';
+import React , { useState }from 'react';
+// import App from './src/App';
 
 const History = (props) => {
     if (props.allClicks.length === 0) {
@@ -10,7 +10,7 @@ const History = (props) => {
         )
     }
 
-    reuturn (
+    return (
         <div>
             button press History: {props.allClicks.join(' ')}
         </div>
@@ -47,7 +47,8 @@ const App = (props) => {
               <Button onClick={handleLeftClick} text="left" />
               <Button onClick={handleRightClick} text="right" />
               {right}
-
+              <p>{allClicks.join(' ')}</p>
+              <History allClicks={allClicks} />
           </div>
       </div>
   )
