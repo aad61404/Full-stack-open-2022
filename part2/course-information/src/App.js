@@ -1,7 +1,7 @@
 import "./App.css";
 
 const Header = ({ course }) => {
-  return <h1>{course.name}</h1>;
+  return <h3>{course.name}</h3>;
 };
 
 const Part = ({ text, value }) => {
@@ -13,23 +13,26 @@ const Part = ({ text, value }) => {
 };
 
 const Content = ({ course }) => {
-  console.log(course);
+  // console.log('course', course);
   const totalStyle = {
     fontWeight: "bold",
   };
 
   const totalExercises = (parts) => {
-    const result = parts.reduce(function (acc, obj) { return acc + obj.exercises; }, 0);
-    return result
-  }
+    const result = parts.reduce(function (acc, obj) {
+      return acc + obj.exercises;
+    }, 0);
+    return result;
+  };
 
   return (
     <>
-      <Part text={course.parts[0].name} value={course.parts[0].exercises} />
-      <Part text={course.parts[1].name} value={course.parts[1].exercises} />
-      <Part text={course.parts[2].name} value={course.parts[2].exercises} />
-      <Part text={course.parts[3].name} value={course.parts[3].exercises} />
-      <div style={totalStyle}>total of {totalExercises(course.parts)} exercises</div>
+      {course.parts.map((part) => (
+        <Part text={part.name} value={part.exercises} />
+      ))}
+      <div style={totalStyle}>
+        total of {totalExercises(course.parts)} exercises
+      </div>
     </>
   );
 };
@@ -44,34 +47,59 @@ const Course = ({ course }) => {
 };
 
 function App() {
-  const course = {
-    id: 1,
-    name: "Half Stack application development",
-    parts: [
-      {
-        name: "Fundamentals of React",
-        exercises: 10,
-        id: 1,
-      },
-      {
-        name: "Using props to pass data",
-        exercises: 7,
-        id: 2,
-      },
-      {
-        name: "State of a component",
-        exercises: 14,
-        id: 3,
-      },
-      {
-        name: "Redux",
-        exercises: 11,
-        id: 4,
-      },
-    ],
-  };
+  const courses = [
+    {
+      name: "Half Stack application development",
+      id: 1,
+      parts: [
+        {
+          name: "Fundamentals of React",
+          exercises: 10,
+          id: 1,
+        },
+        {
+          name: "Using props to pass data",
+          exercises: 7,
+          id: 2,
+        },
+        {
+          name: "State of a component",
+          exercises: 14,
+          id: 3,
+        },
+        {
+          name: "Redux",
+          exercises: 11,
+          id: 4,
+        },
+      ],
+    },
+    {
+      name: "Node.js",
+      id: 2,
+      parts: [
+        {
+          name: "Routing",
+          exercises: 3,
+          id: 1,
+        },
+        {
+          name: "Middlewares",
+          exercises: 7,
+          id: 2,
+        },
+      ],
+    },
+  ];
 
-  return <Course course={course} />;
+  return (
+    <>
+      <h2>Web development cirruculum</h2>
+      {courses.map((course) => (
+        <Course key={course.id} course={course} />
+      ))}
+    </>
+  );
 }
 
 export default App;
