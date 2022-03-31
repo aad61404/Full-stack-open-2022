@@ -1,0 +1,10 @@
+title 0.5 single page
+
+browser->server: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/spa
+server->browser: HTML-code
+browser->server: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/main.css
+server->browser: main.css
+browser-> server: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/spa.js
+server->browser: spa.js
+browser->server: HTTPS GET https://studies.cs.helsinki.fi/exampleapp/data.json
+server->browser: [{"content": "yghffgy","date": "2022-03-30T17:18:48.942Z"},...]

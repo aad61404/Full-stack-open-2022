@@ -1,0 +1,4 @@
+title 0.6 New note single Page
+
+browser-> server: HTTPS POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server->browser: Status Code: 201 ({"message":"note created"})
