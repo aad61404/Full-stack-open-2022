@@ -18,11 +18,10 @@ const Content = ({ course }) => {
     fontWeight: "bold",
   };
 
-  const totalExercises =
-    course.parts[0].exercises +
-    course.parts[1].exercises +
-    course.parts[2].exercises +
-    course.parts[3].exercises;
+  const totalExercises = (parts) => {
+    const result = parts.reduce(function (acc, obj) { return acc + obj.exercises; }, 0);
+    return result
+  }
 
   return (
     <>
@@ -30,7 +29,7 @@ const Content = ({ course }) => {
       <Part text={course.parts[1].name} value={course.parts[1].exercises} />
       <Part text={course.parts[2].name} value={course.parts[2].exercises} />
       <Part text={course.parts[3].name} value={course.parts[3].exercises} />
-      <div style={totalStyle}>total of {totalExercises} exercises</div>
+      <div style={totalStyle}>total of {totalExercises(course.parts)} exercises</div>
     </>
   );
 };
