@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios' 
 
 const Note = ({ note }) => {
   return (
     <>
-      <li>{note.name} {note.phoneNumber}</li>
+      <li>{note.name} {note.number}</li>
     </>
   );
 };
@@ -47,17 +48,23 @@ const PersonForm = ({addNote, newNote, phoneNumber, handleNoteChange, handleNumb
 };
 
 
-const App = (props) => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', phoneNumber: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', phoneNumber: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', phoneNumber: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', phoneNumber: '39-23-6423122', id: 4 }
-  ])
+const App = () => {
+  const [persons, setPersons] = useState([])
   // const [notes, setNotes] = useState([{ name: "Arto Hellas", id: 1, phoneNumber: '09123456789' }]);
   const [filterText, setFilterText] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [newNote, setNewNote] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        console.log('response.data:', response.data)
+        setPersons(response.data)
+      })
+  }, [])
 
   const handleNoteChange = (event) => {
     setNewNote(event.target.value)
@@ -72,7 +79,7 @@ const App = (props) => {
     const noteObject = {
       name: newNote,
       id: persons.length + 1,
-      phoneNumber: phoneNumber
+      number: phoneNumber
     }
 
     if (checkNotes(newNote)) {
