@@ -8,6 +8,45 @@ const Note = ({ note }) => {
   );
 };
 
+const Filter = ({ filterText, handleFilterTextChange }) => {
+  return (
+    <>
+      filter shown with{" "}
+      <input value={filterText} onChange={handleFilterTextChange} />
+    </>
+  );
+};
+
+
+const Persons = ({ persons, filterText }) => {
+  const filterPerson = () => {
+    return persons.filter((e) => e.name.includes(filterText));
+  };
+
+  return (
+    <ul>
+      {filterPerson().map((note) => (
+        <Note key={note.id} note={note} />
+      ))}
+    </ul>
+  );
+};
+
+const PersonForm = ({addNote, newNote, phoneNumber, handleNoteChange, handleNumberChange}) => {
+  return (
+    <form onSubmit={addNote}>
+      <div>
+        name: <input value={newNote} onChange={handleNoteChange} />
+      </div>
+      <div>
+        number: <input value={phoneNumber} onChange={handleNumberChange} />
+      </div>
+      <button type="submit">add</button>
+    </form>
+  );
+};
+
+
 const App = (props) => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', phoneNumber: '040-123456', id: 1 },
@@ -16,9 +55,17 @@ const App = (props) => {
     { name: 'Mary Poppendieck', phoneNumber: '39-23-6423122', id: 4 }
   ])
   // const [notes, setNotes] = useState([{ name: "Arto Hellas", id: 1, phoneNumber: '09123456789' }]);
-  const [phoneNumber, setPhoneNumber] = useState('')
   const [filterText, setFilterText] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [newNote, setNewNote] = useState('')
+
+  const handleNoteChange = (event) => {
+    setNewNote(event.target.value)
+  }
+
+  const handleNumberChange = (event) => {
+    setPhoneNumber(event.target.value)
+  }
 
   const addNote = (event) => {
     event.preventDefault()
@@ -38,21 +85,10 @@ const App = (props) => {
     console.log('persons:', persons)
   }
 
-  const handleNoteChange = (event) => {
-    setNewNote(event.target.value)
-  }
-
-  const handleNumberChange = (event) => {
-    setPhoneNumber(event.target.value)
-  }
-
   const handleFilterTextChange = (event) => {
     setFilterText(event.target.value)
   }
 
-  const filterPerson = () => {
-    return persons.filter(e => e.name.includes(filterText) )
-  }
 
   const checkNotes = (name) => {
     if (persons.filter(e => e.name === name).length > 0) {
@@ -65,24 +101,18 @@ const App = (props) => {
     <div>
       <h1>Phonebook</h1>
       <div>
-        filter shown with <input value={filterText} onChange={handleFilterTextChange} />
+        <Filter filterText={filterText} handleFilterTextChange={handleFilterTextChange} />
       </div>
       <h1>add a new</h1>
-      <form onSubmit={addNote}>
-        <div>
-          name: <input value={newNote} onChange={handleNoteChange} />
-        </div>
-        <div>
-          number: <input value={phoneNumber} onChange={handleNumberChange} />
-        </div>
-        <button type="submit">add</button>
-      </form>
-      <h1>Numbers</h1>
-      <ul>
-        {filterPerson().map((note) => (
-          <Note key={note.id} note={note} />
-        ))}
-      </ul>
+      <PersonForm
+        addNote={addNote}
+        newNote={newNote}
+        phoneNumber={phoneNumber}
+        handleNoteChange={handleNoteChange}
+        handleNumberChange={handleNumberChange}
+      />
+      <h3>Numbers</h3>
+      <Persons persons={persons} filterText={filterText} />
     </div>
   );
 };
