@@ -1,13 +1,29 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Line = ({ name }) => {
+const Line = ({ name, flag }) => {
+  const [showFlag, setShowFlag] = useState(false)
+
+  const handleShowFlag = () => {
+    setShowFlag(!showFlag)
+  }
+
   return (
     <tr>
       <td>{name}</td>
+      <button onClick={handleShowFlag}>show</button>
+      {
+        showFlag && <FlagImage flag={flag} />
+      }
     </tr>
   );
 };
+
+
+
+const FlagImage = ({ flag }) => {
+    return <img src={flag} alt="flag" width="100px" />
+}
 
 const Filter = ({ data, txt }) => {
   // console.log('apiData:', apiData)
@@ -43,7 +59,7 @@ const Filter = ({ data, txt }) => {
           <table>
             <tbody>
               {result.map((item) => (
-                <Line key={item.name} name={item.name} />
+                <Line key={item.name} name={item.name} flag={item.flag} />
               ))}
             </tbody>
           </table>
