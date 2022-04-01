@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios' 
+import ApiServices from './services/Api';
 
 const Note = ({ note }) => {
   return (
@@ -57,12 +57,12 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    ApiServices
+      .getAll()
       .then(response => {
         console.log('promise fulfilled')
-        console.log('response.data:', response.data)
-        setPersons(response.data)
+        console.log('response.data:', response)
+        setPersons(response)
       })
   }, [])
 
@@ -83,7 +83,7 @@ const App = () => {
       alert(newNote + 'is already added to phonebook')
     } else {
       setPersons(newPersonGroup)
-      axios.post("http://localhost:3001/persons", newPerson);
+      ApiServices.create(newPerson);
       setNewNote('')
       setPhoneNumber('')
     }
