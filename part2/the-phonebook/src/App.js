@@ -14,8 +14,13 @@ const App = (props) => {
       name: newNote,
       id: notes.length + 1,
     }
-    setNotes(notes.concat(noteObject))
-    setNewNote('')
+
+    if (checkNotes(newNote)) {
+      alert(newNote + 'is already added to phonebook')
+    } else {
+      setNotes(notes.concat(noteObject))
+      setNewNote('');
+    }
     console.log('notes:', notes)
   }
 
@@ -23,6 +28,12 @@ const App = (props) => {
     setNewNote(event.target.value)
   }
 
+  const checkNotes = (name) => {
+    if (notes.filter(e => e.name === name).length > 0) {
+      return true
+    }
+    return false
+  }
 
   return (
     <div>
