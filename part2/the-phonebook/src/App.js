@@ -76,16 +76,14 @@ const App = () => {
 
   const addNote = (event) => {
     event.preventDefault()
-    const noteObject = {
-      name: newNote,
-      id: persons.length + 1,
-      number: phoneNumber
-    }
+    const newPerson = { name: newNote, number: phoneNumber, id: persons.length + 1 };
+    const newPersonGroup = persons.concat(newPerson)
 
     if (checkNotes(newNote)) {
       alert(newNote + 'is already added to phonebook')
     } else {
-      setPersons(persons.concat(noteObject))
+      setPersons(newPersonGroup)
+      axios.post("http://localhost:3001/persons", newPerson);
       setNewNote('')
       setPhoneNumber('')
     }
