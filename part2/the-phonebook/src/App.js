@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import ApiServices from './services/Api';
 
-const Note = ({ note, toggleImportance  }) => {
-  const label = note.important 
-    ? 'make not important' 
-    : 'make important';
+const Note = ({ note }) => {
 
   return (
     <>
       <li className='note'>
         {note.name} {note.number}
-        <button onClick={toggleImportance}>{label}</button>
       </li>
     </>
   );
@@ -61,12 +57,12 @@ const PersonForm = ({addNote, newNote, phoneNumber, handleNoteChange, handleNumb
   );
 };
 
-const Notification = ({ message, type = "success" }) => {
+const Notification = ({ message }) => {
   if (message === null) {
     return null;
   }
 
-  return <div className={`notification notification--${type}`}>{message}</div>;
+  return <div className={`notification notification--${message.type}`}>{message.text}</div>;
 };
 
 const App = () => {
@@ -122,6 +118,16 @@ const App = () => {
             person.id !== returnedPerson.id ? person : returnedPerson
           );
           setPersons(newPersons);
+          setErrorMessage({
+            text: `Update ${returnedPerson.name}`,
+            type: "success",
+          });
+        })
+        .catch((err) => {
+          setErrorMessage({
+            text: `${newNote} was already removed from server`,
+            type: "error",
+          });
         });
       }
       return;
@@ -131,7 +137,7 @@ const App = () => {
     const newPersonGroup = persons.concat(newPerson)
     setPersons(newPersonGroup)
     ApiServices.create(newPerson);
-    setErrorMessage(`Create ${newNote}`);
+    setErrorMessage({ text: `Create ${newNote}`, type: "success" });
     console.log('persons:', persons)
   }
 
@@ -152,6 +158,13 @@ const App = () => {
       ApiServices.deletePerson(id).then((response) => {
         const newPersons = persons.filter((person) => person.id !== id);
         setPersons(newPersons);
+        setErrorMessage({ text: `Delete ${name}`, type: "success" });
+      })
+      .catch((err) => {
+        setErrorMessage({
+          text: `${name} was already removed from server`,
+          type: "error",
+        });
       });
     }
   };

@@ -37,3 +37,7 @@ li {
 .notification--success {
   color: green;
 }
+
+.notification--error {
+  color: red;
+}
