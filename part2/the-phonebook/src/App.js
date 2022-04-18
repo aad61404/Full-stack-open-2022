@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import ApiServices from './services/Api';
 
-const Note = ({ note }) => {
+const Note = ({ note, toggleImportance  }) => {
+  const label = note.important 
+    ? 'make not important' 
+    : 'make important';
+
   return (
     <>
-      <li>{note.name} {note.number}</li>
+      <li className='note'>
+        {note.name} {note.number}
+        <button onClick={toggleImportance}>{label}</button>
+      </li>
     </>
   );
 };
@@ -27,14 +34,14 @@ const Persons = ({ persons, filterText, deletePerson }) => {
   return (
     <ul>
       {filterPerson().map((note) => (
-        <>
-        <Note key={note.id} note={note} />
+        <div key={note.id}>
+          <Note  note={note} />
           <button
             onClick={() => deletePerson(note)}
             >
             delete
           </button>
-        </>
+        </div>
       ))}
     </ul>
   );
@@ -54,6 +61,13 @@ const PersonForm = ({addNote, newNote, phoneNumber, handleNoteChange, handleNumb
   );
 };
 
+const Notification = ({ message, type = "success" }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className={`notification notification--${type}`}>{message}</div>;
+};
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -61,6 +75,7 @@ const App = () => {
   const [filterText, setFilterText] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [newNote, setNewNote] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -71,7 +86,11 @@ const App = () => {
         console.log('response.data:', response)
         setPersons(response)
       })
-  }, [])
+
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+  }, [errorMessage])
 
   const handleNoteChange = (event) => {
     setNewNote(event.target.value)
@@ -112,7 +131,7 @@ const App = () => {
     const newPersonGroup = persons.concat(newPerson)
     setPersons(newPersonGroup)
     ApiServices.create(newPerson);
-
+    setErrorMessage(`Create ${newNote}`);
     console.log('persons:', persons)
   }
 
@@ -140,6 +159,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={errorMessage} />
       <div>
         <Filter filterText={filterText} handleFilterTextChange={handleFilterTextChange} />
       </div>
