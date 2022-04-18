@@ -19,7 +19,7 @@ const Filter = ({ filterText, handleFilterTextChange }) => {
 };
 
 
-const Persons = ({ persons, filterText }) => {
+const Persons = ({ persons, filterText, deletePerson }) => {
   const filterPerson = () => {
     return persons.filter((e) => e.name.includes(filterText));
   };
@@ -27,7 +27,14 @@ const Persons = ({ persons, filterText }) => {
   return (
     <ul>
       {filterPerson().map((note) => (
+        <>
         <Note key={note.id} note={note} />
+          <button
+            onClick={() => deletePerson(note)}
+            >
+            delete
+          </button>
+        </>
       ))}
     </ul>
   );
@@ -102,6 +109,15 @@ const App = () => {
     return false
   }
 
+  const deletePerson = ({ id, name }) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      ApiServices.deletePerson(id).then((response) => {
+        const newPersons = persons.filter((person) => person.id !== id);
+        setPersons(newPersons);
+      });
+    }
+  };
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -117,7 +133,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={persons} filterText={filterText} />
+      <Persons persons={persons} filterText={filterText} deletePerson={deletePerson}/>
     </div>
   );
 };
