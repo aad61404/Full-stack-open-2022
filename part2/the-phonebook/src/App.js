@@ -83,17 +83,36 @@ const App = () => {
 
   const addNote = (event) => {
     event.preventDefault()
-    const newPerson = { name: newNote, number: phoneNumber, id: persons.length + 1 };
-    const newPersonGroup = persons.concat(newPerson)
+    setNewNote('')
+    setPhoneNumber('')
 
     if (checkNotes(newNote)) {
+      const currentPerson = persons.filter((person) => person.name === newNote);
       alert(newNote + 'is already added to phonebook')
-    } else {
-      setPersons(newPersonGroup)
-      ApiServices.create(newPerson);
-      setNewNote('')
-      setPhoneNumber('')
+
+      if (
+        window.confirm(
+          `${currentPerson[0].name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        ApiServices.update(currentPerson[0].id, {
+          name: newNote,
+          number: phoneNumber,
+        }).then((returnedPerson) => {
+          const newPersons = persons.map((person) =>
+            person.id !== returnedPerson.id ? person : returnedPerson
+          );
+          setPersons(newPersons);
+        });
+      }
+      return;
     }
+
+    const newPerson = { name: newNote, number: phoneNumber, id: persons.length + 1 };
+    const newPersonGroup = persons.concat(newPerson)
+    setPersons(newPersonGroup)
+    ApiServices.create(newPerson);
+
     console.log('persons:', persons)
   }
 
