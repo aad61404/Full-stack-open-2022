@@ -60,6 +60,21 @@ app.get("/info", (req, res) => {
     res.send(`<div><p>Pheonebook has info for 2 people</p><p>${time}</p></div>`)
 })
 
+const getRandomInt = (max) => {
+    return Math.floor(Math.random() * max);
+}
+
+app.post("/api/persons", (req, res) => {
+    const { name, number } = req.body;
+    const person = {
+      id: getRandomInt(1000),
+      name,
+      number,
+    };
+    persons.push(person);
+    res.json(person);
+  });
+
 
 const PORT = 3001;
 app.listen(PORT, () => {
