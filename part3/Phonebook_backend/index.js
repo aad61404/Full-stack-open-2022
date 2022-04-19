@@ -65,7 +65,23 @@ const getRandomInt = (max) => {
 }
 
 app.post("/api/persons", (req, res) => {
-    const { name, number } = req.body;
+    const body = req.body
+    const { name, number } = body;
+
+    if (!body.name || !body.number) {
+        return res.status(400).json({ 
+          error: 'The name or number is missing' 
+        })
+    }
+
+    const isDuplicate = persons.find((person) => person.name === name)
+
+    if (isDuplicate) {
+        return res.status(400).json({
+          error: "The name already exists in the phonebook",
+        });
+    }
+
     const person = {
       id: getRandomInt(1000),
       name,
