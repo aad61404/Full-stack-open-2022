@@ -2,17 +2,14 @@ const express = require("express");
 const morgan = require("morgan");
 const app = express();
 app.use(express.json())
-app.use(morgan("tiny"));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
-app.use(morgan(function (tokens, req, res) {
-  return [
-    tokens.method(req, res),
-    tokens.url(req, res),
-    tokens.status(req, res),
-    tokens.res(req, res, 'content-length'), '-',
-    tokens['response-time'](req, res), 'ms'
-  ].join(' ')
-}))
+// app.use(morgan("tiny"));
+// sample
+// morgan.token('type', function (req, res) { return req.headers['content-type'] })
+// app.use(morgan(':type :method :url :status :res[content-length] - :response-time ms'))
+morgan.token('content', function (req, res) {
+  return JSON.stringify(req.body)
+})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'))
 
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
