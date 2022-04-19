@@ -35,6 +35,12 @@ app.get("/api/persons", (req, res) => {
     res.json(persons)
 })
 
+app.get("/info", (req, res) => {
+    var time = new Date()
+    res.send(`<div><p>Pheonebook has info for 2 people</p><p>${time}</p></div>`)
+})
+
+
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server runnning on port ${PORT}`)
