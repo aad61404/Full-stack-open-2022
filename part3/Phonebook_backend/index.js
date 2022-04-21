@@ -2,6 +2,10 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require('cors')
 const app = express();
+
+require("dotenv").config();
+const Person = require('./Person')
+
 app.use(express.static('build'))
 app.use(cors())
 
@@ -54,12 +58,14 @@ app.get("/", (req, res) => {
 })
 
 app.get("/api/persons", (req, res) => {
-    res.json(persons)
+  Person.find({}).then((persons) => {
+    res.json(persons);
+  });
 })
 
-app.get("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
+app.get("/api/persons/:id", async (req, res) => {
+    const id = req.params.id
+    const person = await Person.findById(id);
 
     if (person) {
         res.json(person)
@@ -71,10 +77,17 @@ app.get("/api/persons/:id", (req, res) => {
 })
 
 app.delete("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id)
-    persons = persons.filter(person => person.id !== id)
+    const id = req.params.id
+    const isPersonExist = await Person.findById(id);
 
-    res.status(204).end()
+    if (isPersonExist) {
+      await Person.findByIdAndRemove(id);
+      res.json({ success: true });
+    } else {
+      return res.status(400).json({
+        error: "person not exists in the phonebook",
+      });
+    }
 })
 
 app.get("/info", (req, res) => {
@@ -86,7 +99,7 @@ const getRandomInt = (max) => {
     return Math.floor(Math.random() * max);
 }
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", async (req, res) => {
     const body = req.body
     const { name, number } = body;
 
@@ -96,21 +109,21 @@ app.post("/api/persons", (req, res) => {
         })
     }
 
-    const isDuplicate = persons.find((person) => person.name === name)
+    const isDuplicate = await Person.findOne({ name: name });
 
     if (isDuplicate) {
         return res.status(400).json({
           error: "The name already exists in the phonebook",
         });
     }
-
     const person = {
-      id: getRandomInt(1000),
       name,
       number,
     };
-    persons.push(person);
-    res.json(person);
+
+    const newPPL = await new Person(person)
+    await newPPL.save()
+    res.json(newPPL);
   });
 
 const unknownEndpoint = (request, response) => {
