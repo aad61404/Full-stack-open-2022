@@ -64,29 +64,38 @@ app.get("/api/persons", (req, res) => {
 })
 
 app.get("/api/persons/:id", async (req, res) => {
-    const id = req.params.id
-    const person = await Person.findById(id);
+    try {
+      const id = req.params.id
+      const person = await Person.findById(id);
 
-    if (person) {
-        res.json(person)
-    } else {
+      if (person) {
+        res.json(person);
+      } else {
         res.status(404).json({
-            error: `can't find id`
+          error: `can't find id`
         })
+      }
+      
+    } catch (error) {
+      next('error', error);
     }
 })
 
-app.delete("/api/persons/:id", (req, res) => {
-    const id = req.params.id
-    const isPersonExist = await Person.findById(id);
-
-    if (isPersonExist) {
-      await Person.findByIdAndRemove(id);
-      res.json({ success: true });
-    } else {
-      return res.status(400).json({
-        error: "person not exists in the phonebook",
-      });
+app.delete("/api/persons/:id", async (req, res) => {
+    try {
+      const id = req.params.id
+      const isPersonExist = await Person.findById(id);
+      
+      if (isPersonExist) {
+        await Person.findByIdAndRemove(id);
+      } else {
+        return res.status(400).json({
+          error: "The person not exists in the phonebook",
+        });
+      }
+      
+    } catch (error) {
+      next('error', error);
     }
 })
 
@@ -109,26 +118,44 @@ app.post("/api/persons", async (req, res) => {
         })
     }
 
-    const isDuplicate = await Person.findOne({ name: name });
+    try {
+      const isDuplicate = await Person.findOne({ name: name });
 
-    if (isDuplicate) {
-        return res.status(400).json({
-          error: "The name already exists in the phonebook",
-        });
+      if (isDuplicate) {
+          return res.status(400).json({
+            error: "The name already exists in the phonebook",
+          });
+      }
+
+      const person = {
+        name,
+        number,
+      };
+  
+      const newPPL = await new Person(person)
+      await newPPL.save()
+      res.json(newPPL);
+    } catch (error) {
+      next('error', error);
     }
-    const person = {
-      name,
-      number,
-    };
 
-    const newPPL = await new Person(person)
-    await newPPL.save()
-    res.json(newPPL);
   });
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
+
+const errorHandler = (error, request, response, next) => {
+  console.error('error.message', error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 app.use(unknownEndpoint)
 
