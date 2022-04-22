@@ -74,7 +74,6 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    console.log('effect')
     ApiServices
       .getAll()
       .then(response => {
@@ -83,9 +82,9 @@ const App = () => {
         setPersons(response)
       })
 
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      // setTimeout(() => {
+      //   setErrorMessage(null);
+      // }, 10000);
   }, [errorMessage])
 
   const handleNoteChange = (event) => {
@@ -136,8 +135,16 @@ const App = () => {
     const newPerson = { name: newNote, number: phoneNumber, id: persons.length + 1 };
     const newPersonGroup = persons.concat(newPerson)
     setPersons(newPersonGroup)
-    ApiServices.create(newPerson);
-    setErrorMessage({ text: `Create ${newNote}`, type: "success" });
+    ApiServices
+      .create(newPerson)
+      .then(createPerson => {
+        setErrorMessage({ text: `Create ${newNote}`, type: "success" });
+      })
+      .catch(error => {
+        setErrorMessage({ text: `${error.response.data.error}`, type: "error" });
+      })
+
+    
     console.log('persons:', persons)
   }
 

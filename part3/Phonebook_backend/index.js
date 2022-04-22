@@ -155,7 +155,7 @@ const errorHandler = (error, request, response, next) => {
   }
   // 新增單人 不符合規定
   if (error.name === "ValidationError") {
-    return response.status(400).send({ error: "ValidationError" });
+    return response.status(400).send({ error: error.message });
   }
 
   next(error);
