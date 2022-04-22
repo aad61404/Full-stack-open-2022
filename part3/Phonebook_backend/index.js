@@ -63,23 +63,47 @@ app.get("/api/persons", (req, res) => {
   });
 })
 
-app.get("/api/persons/:id", async (req, res) => {
-    try {
-      const id = req.params.id
-      const person = await Person.findById(id);
-
-      if (person) {
-        res.json(person);
-      } else {
-        res.status(404).json({
-          error: `can't find id`
-        })
-      }
-      
-    } catch (error) {
-      next('error', error);
+app.get("/api/persons/:id", async (req, res, next) => {
+  const id = req.params.id
+  Person.findById(id)
+  .then(person => {
+    if (person) {
+      res.json(person)
+    } else {
+      res.status(404).end()
     }
+  })
+  .catch(error => {
+    return next(error)
+  })
 })
+
+app.post("/api/persons", async (req, res, next) => {
+  const body = req.body;
+  const { name, number } = body;
+
+  if (!body.name || !body.number) {
+    return res.status(400).json({ error: "The name or number is missing" });
+  }
+
+  const isDuplicate = await Person.findOne({ name: name });
+
+  if (isDuplicate) {
+    return res.status(400).json({ error: "The name already exists in the phonebook" });
+  }
+
+  const newPPL = new Person({
+    name,
+    number,
+  });
+
+  newPPL
+    .save()
+    .then((savePerson) => {
+      res.json(savePerson);
+    })
+    .catch((error) => next(error));
+});
 
 
 app.put("/api/persons/:id", async (req, res) => {
@@ -98,22 +122,12 @@ app.put("/api/persons/:id", async (req, res) => {
   }
 });
 
-app.delete("/api/persons/:id", async (req, res) => {
-    try {
-      const id = req.params.id
-      const isPersonExist = await Person.findById(id);
-      
-      if (isPersonExist) {
-        await Person.findByIdAndRemove(id);
-      } else {
-        return res.status(400).json({
-          error: "The person not exists in the phonebook",
-        });
-      }
-      
-    } catch (error) {
-      next('error', error);
-    }
+app.delete("/api/persons/:id", async (req, res, next) => {
+  Person.findByIdAndRemove(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 })
 
 app.get("/info", (req, res) => {
@@ -125,38 +139,7 @@ const getRandomInt = (max) => {
     return Math.floor(Math.random() * max);
 }
 
-app.post("/api/persons", async (req, res) => {
-    const body = req.body
-    const { name, number } = body;
 
-    if (!body.name || !body.number) {
-        return res.status(400).json({ 
-          error: 'The name or number is missing' 
-        })
-    }
-
-    try {
-      const isDuplicate = await Person.findOne({ name: name });
-
-      if (isDuplicate) {
-          return res.status(400).json({
-            error: "The name already exists in the phonebook",
-          });
-      }
-
-      const person = {
-        name,
-        number,
-      };
-  
-      const newPPL = await new Person(person)
-      await newPPL.save()
-      res.json(newPPL);
-    } catch (error) {
-      next('error', error);
-    }
-
-  });
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -164,9 +147,15 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   console.error('error.message', error.message);
-
+  console.log('error:', error)
+  console.log('error.name:', error.name)
+  // 查詢找不到單 id
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  }
+  // 新增單人 不符合規定
+  if (error.name === "ValidationError") {
+    return response.status(400).send({ error: "ValidationError" });
   }
 
   next(error);
