@@ -82,9 +82,28 @@ const App = () => {
       );
       setBlogs(newBlogs);
     } catch (error) {
-      console.log('error:', error)
+      console.log("error:", error);
       setErrorMessage({
         text: `a new like to blog ${blog.title} by ${blog.author} NOT added`,
+        type: "error",
+      });
+    }
+  };
+
+  const deleteBlog = async (blog) => {
+    try {
+      await blogService.deleteBlog(blog.id);
+      setErrorMessage({
+        text: `blog ${blog.title} by ${blog.author} already deleted`,
+        type: "success",
+      });
+      const newBlogs = blogs.filter(
+        (currentBlog) => currentBlog.id !== blog.id
+      );
+      setBlogs(newBlogs);
+    } catch (error) {
+      setErrorMessage({
+        text: `blog ${blog.title} by ${blog.author} Not deleted`,
         type: "error",
       });
     }
@@ -105,9 +124,16 @@ const App = () => {
             <BlogForm handleBlogForm={handleBlogForm} />
           </Togglable>
           <ul>
-            {blogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
-            ))}
+            {blogs
+              .sort((a, b) => b.likes - a.likes)
+              .map((blog) => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  updateBlog={updateBlog}
+                  deleteBlog={deleteBlog}
+                />
+              ))}
           </ul>
         </>
       )}
