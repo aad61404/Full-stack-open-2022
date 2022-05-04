@@ -5,12 +5,14 @@ import BlogForm from './components/BlogForm'
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import Togglable from "./components/Togglable"
 import "./app.css"
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null)
+  const blogRef = React.createRef()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -54,6 +56,7 @@ const App = () => {
       })
       setBlogs(blogs.concat(blog))
       setErrorMessage({ text: `a new blog ${blog.title}`, type: "success" });
+      blogRef.current.toggleVisibility()
     } catch (exception) {
       setErrorMessage({ text: `wrong data`, type: "error" });
       console.log('exception', exception)
@@ -72,7 +75,9 @@ const App = () => {
           <p>{user.name} logged in</p>
           
           <button onClick={handleLogout}>logout</button>
-          <BlogForm handleBlogForm={handleBlogForm} />
+          <Togglable buttonLabel="new blog" ref={blogRef}>
+            <BlogForm handleBlogForm={handleBlogForm} />
+          </Togglable>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
