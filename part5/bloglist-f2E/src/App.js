@@ -63,6 +63,33 @@ const App = () => {
     }
   };
 
+  const updateBlog = async (blog) => {
+    try {
+      await blogService.update(blog.id, {
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes,
+      });
+      setErrorMessage({
+        text: `new like to blog ${blog.title} by ${blog.author} added`,
+        type: "success",
+      });
+      const newBlogs = blogs.map((currentBlog) =>
+        currentBlog.id === blog.id
+          ? { ...currentBlog, likes: currentBlog.likes + 1 }
+          : currentBlog
+      );
+      setBlogs(newBlogs);
+    } catch (error) {
+      console.log('error:', error)
+      setErrorMessage({
+        text: `a new like to blog ${blog.title} by ${blog.author} NOT added`,
+        type: "error",
+      });
+    }
+  };
+
   return (
     <div>
       <h2>blogs</h2>
@@ -79,7 +106,7 @@ const App = () => {
           </Togglable>
           <ul>
             {blogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
             ))}
           </ul>
         </>
