@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
+import BlogForm from './components/BlogForm'
+// import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
+  // const [errorMessage, setErrorMessage] = useEffect(null)
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -29,6 +32,7 @@ const App = () => {
       setUser(user)
       window.localStorage.setItem('user', JSON.stringify(user))
     } catch (exception) {
+      // console.log('exception:', exception)
       /*
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
@@ -45,6 +49,20 @@ const App = () => {
     window.localStorage.removeItem('user')
   }
 
+  const handleBlogForm = async (title, author, url) => {
+    try {
+      const blog = await blogService.create({
+        title,
+        author,
+        url,
+      })
+      setBlogs(blogs.concat(blog))
+    } catch (exception) {
+      console.log('exception', exception)
+    }
+  }
+
+
   return (
     <div>
       <h2>blogs</h2>
@@ -53,7 +71,9 @@ const App = () => {
       ) : (
         <>
           <p>{user.name} logged in</p>
+          {/* <Notification message={errorMessage} /> */}
           <button onClick={handleLogout}>logout</button>
+          <BlogForm handleBlogForm={handleBlogForm} />
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
