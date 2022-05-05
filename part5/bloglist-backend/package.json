@@ -8,7 +8,8 @@
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
-    "test_init": "echo \"Error: no test specified\" && exit 1"
+    "test_init": "echo \"Error: no test specified\" && exit 1",
+    "cypress:open": "cypress open"
   },
   "author": "Jayson",
   "license": "ISC",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "cypress": "^9.6.0",
     "eslint": "^8.13.0",
     "jest": "^27.5.1",
     "nodemon": "^2.0.15",
