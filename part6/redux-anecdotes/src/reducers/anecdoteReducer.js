@@ -28,15 +28,14 @@ export const addVoteOf = (id) => {
 const getId = () => (100000 * Math.random()).toFixed(0);
 
 export const addAnecdote = (anecdote) => {
-  return {
-    type: "NEW_ANECDOTE",
-    data: {
-      content: anecdote,
-      id: getId(),
-      votes: 0,
-    },
-  };
-};
+  return async (dispatch) => {
+    const newAnecdote = await anecdoteService.createNew(anecdote)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: newAnecdote,
+    })
+  }
+}
 
 export const initializeAnecdotes = () => {
   return async (dispatch) => {
