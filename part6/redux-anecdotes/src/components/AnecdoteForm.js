@@ -12,10 +12,10 @@ const AnecdoteForm = () => {
     console.log("anecdote:", anecdote);
     event.target.anecdote.value = "";
     dispatch(addAnecdote(anecdote));
-    dispatch(setNotification(`Add new anecdote: ${anecdote}`))
+    dispatch(setNotification(`Add new anecdote: ${anecdote}`));
     setTimeout(() => {
-      dispatch(setNotification(''))
-    }, 5000)
+      dispatch(setNotification(""));
+    }, 5000);
   };
 
   return (
