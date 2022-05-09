@@ -89,10 +89,4 @@ describe('total likes', () => {
     const result = listHelper.totalLikes(blogs)
     expect(result).toBe(36)
   })
-
-  test('of the author whose blog posts have the largest amount of likes', () => {
-    const result = listHelper.mostLikes(blogs)
-    expect(result.author).toBe('Edsger W. Dijkstra')
-    expect(result.likes).toBe(12)
-  })
 })

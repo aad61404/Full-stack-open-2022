@@ -12,4 +12,4 @@ describe('average', () => {
   test('of empty array is zero', () => {
     expect(average([])).toBe(0)
   })
-})
+}) 
