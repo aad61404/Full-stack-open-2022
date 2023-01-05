@@ -43,3 +43,33 @@ function calculateExercises(
 console.log(calculateExercises(1, [3, 0, 2, 4.5, 0, 3, 1]))
 console.log(calculateExercises(2, [3, 0, 2, 4.5, 0, 3, 1]))
 console.log(calculateExercises(3, [3, 0, 2, 4.5, 0, 3, 1]))
+
+/*
+{
+  periodLength: 7,
+  trainingDays: 5,
+  success: true,
+  rating: 3,
+  ratingDescription: 'goal accomplished 🎉',
+  target: 1,
+  average: 1.9285714285714286
+}
+{
+  periodLength: 7,
+  trainingDays: 5,
+  success: false,
+  rating: 2,
+  ratingDescription: 'not too bad but could be better 😛',
+  target: 2,
+  average: 1.9285714285714286
+}
+{
+  periodLength: 7,
+  trainingDays: 5,
+  success: false,
+  rating: 1,
+  ratingDescription: 'a little far from the target 😴',
+  target: 3,
+  average: 1.9285714285714286
+}
+*/
